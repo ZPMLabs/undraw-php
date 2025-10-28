@@ -1,5 +1,5 @@
 {
-  "name": "ZPMLabs/undraw-php",
+  "name": "zpmlabs/undraw-php",
   "description": "Tiny client for undraw.co search (Next.js data routes) returning DTOs and SVG code on demand.",
   "type": "library",
   "license": "MIT",
