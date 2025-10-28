@@ -1,16 +1,35 @@
 <?php
 
-namespace Support\Laravel;
+namespace Undraw\Support\Laravel;
 
 use Psr\SimpleCache\CacheInterface;
 
 final class LaravelCacheAdapter implements CacheInterface {
-    public function get($k, $d=null){ return cache()->get($k, $d); }
-    public function set($k,$v,$t=null){ return cache()->put($k,$v,$t); }
-    public function delete($k){ return cache()->forget($k); }
-    public function clear(){ cache()->flush(); return true; }
-    public function getMultiple($keys,$d=null){ return collect($keys)->mapWithKeys(fn($k)=>[$k=>cache()->get($k,$d)])->all(); }
-    public function setMultiple($values,$t=null){ foreach($values as $k=>$v) cache()->put($k,$v,$t); return true; }
-    public function deleteMultiple($keys){ foreach($keys as $k) cache()->forget($k); return true; }
-    public function has($k){ return cache()->has($k); }
+    public function get(string $key, mixed $default = null): mixed {
+        return cache()->get($key, $default);
+    }
+
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool {
+        return cache()->put($key, $value, $ttl);
+    }
+
+    public function delete(string $key): bool {
+        return cache()->forget($key);
+    }
+
+    public function clear(): bool {
+        cache()->flush();
+        return true;
+    }
+
+    public function getMultiple(iterable $keys, mixed $default = null): iterable {
+        return collect($keys)->mapWithKeys(fn($k) => [$k => cache()->get($k, $default)])->all();
+    }
+    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool {
+        foreach($values as $k=>$v) cache()->put($k,$v,$ttl); return true; }
+    public function deleteMultiple(iterable $keys): bool {
+        foreach($keys as $k) cache()->forget($k); return true; }
+    public function has(string $key): bool {
+        return cache()->has($key);
+    }
 }
