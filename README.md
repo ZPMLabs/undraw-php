@@ -30,28 +30,12 @@ foreach ($results as $i) {
 ## With Laravel
 
 ```php
+use Undraw\Factory\UndrawFactory;
 use Undraw\UndrawClient;
-use Undraw\BuildIdResolver;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Discovery\Psr18ClientDiscovery;
+use Undraw\Support\Laravel\LaravelCacheAdapter;
 
 app()->bind(UndrawClient::class, function () {
-    $http = Psr18ClientDiscovery::find();
-    $req  = Psr17FactoryDiscovery::findRequestFactory();
-    $str  = Psr17FactoryDiscovery::findStreamFactory();
-    $cache = new class implements \Psr\SimpleCache\CacheInterface {
-        public function get($key, $default = null){ return cache()->get($key, $default); }
-        public function set($key, $value, $ttl = null){ return cache()->put($key, $value, $ttl); }
-        public function delete($key){ return cache()->forget($key); }
-        public function clear(){ cache()->flush(); return true; }
-        public function getMultiple($keys, $default = null){ return collect($keys)->mapWithKeys(fn($k)=>[$k=>cache()->get($k, $default)])->all(); }
-        public function setMultiple($values, $ttl = null){ foreach($values as $k=>$v) cache()->put($k,$v,$ttl); return true; }
-        public function deleteMultiple($keys){ foreach($keys as $k) cache()->forget($k); return true; }
-        public function has($key){ return cache()->has($key); }
-    };
-
-    $resolver = new BuildIdResolver('https://undraw.co', $http, $req, $cache);
-    return new UndrawClient($http, $req, $str, $cache, $resolver);
+    return UndrawFactory::create(new LaravelCacheAdapter());
 });
 ```
 
